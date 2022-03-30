@@ -10,6 +10,8 @@ import Foundation
 import SwiftUI
 import CorePlot
 
+typealias plotDataType = [CPTScatterPlotField : Double]
+
 class PlotDataClass: NSObject, ObservableObject {
     
     @MainActor @Published var plotData = [plotDataType]()

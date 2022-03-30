@@ -27,6 +27,7 @@
 		2CFB7F8F27F504F900C0A8F8 /* CorePlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F8727F504DD00C0A8F8 /* CorePlot.swift */; };
 		2CFB7F9027F504FC00C0A8F8 /* CalculatePlotData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F8527F504D600C0A8F8 /* CalculatePlotData.swift */; };
 		2CFB7F9127F504FF00C0A8F8 /* ChangingPlotParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F8327F504CE00C0A8F8 /* ChangingPlotParameters.swift */; };
+		2CFB7F9727F5076F00C0A8F8 /* CorePlot in Frameworks */ = {isa = PBXBuildFile; productRef = 2CFB7F9627F5076F00C0A8F8 /* CorePlot */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CFB7F9727F5076F00C0A8F8 /* CorePlot in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +187,8 @@
 			dependencies = (
 			);
 			name = "Matrix-Solver (iOS)";
+			packageProductDependencies = (
+			);
 			productName = "Matrix-Solver (iOS)";
 			productReference = 2CFB7F4D27F2673800C0A8F8 /* Matrix-Solver.app */;
 			productType = "com.apple.product-type.application";
@@ -202,6 +206,9 @@
 			dependencies = (
 			);
 			name = "Matrix-Solver (macOS)";
+			packageProductDependencies = (
+				2CFB7F9627F5076F00C0A8F8 /* CorePlot */,
+			);
 			productName = "Matrix-Solver (macOS)";
 			productReference = 2CFB7F5327F2673800C0A8F8 /* Matrix-Solver.app */;
 			productType = "com.apple.product-type.application";
@@ -277,6 +284,9 @@
 				Base,
 			);
 			mainGroup = 2CFB7F4027F2673500C0A8F8;
+			packageReferences = (
+				2CFB7F9527F5076F00C0A8F8 /* XCRemoteSwiftPackageReference "core-plot" */,
+			);
 			productRefGroup = 2CFB7F4E27F2673800C0A8F8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -436,6 +446,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -489,6 +500,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -741,6 +753,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2CFB7F9527F5076F00C0A8F8 /* XCRemoteSwiftPackageReference "core-plot" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/core-plot/core-plot";
+			requirement = {
+				branch = "release-2.4";
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2CFB7F9627F5076F00C0A8F8 /* CorePlot */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2CFB7F9527F5076F00C0A8F8 /* XCRemoteSwiftPackageReference "core-plot" */;
+			productName = CorePlot;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2CFB7F4127F2673500C0A8F8 /* Project object */;
 }
