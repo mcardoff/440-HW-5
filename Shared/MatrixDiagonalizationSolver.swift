@@ -169,7 +169,7 @@ class MatrixSolver: NSObject, ObservableObject {
                 let psil = basisStates[j], psir = basisStates[i]
                 var mel = matrixElement(psil: psil, V: V, psir: psir, wellwidth: a)
                 if i == j {
-                    mel += squareWellObj.eigenVals[i] // diagonal elements will have the kinetic energy
+                    mel -= squareWellObj.eigenVals[i] // diagonal elements will have the kinetic energy
                 }
                 //            print("H_\(i),\(j)=\(mel)")
                 singleHamiltonianRow.append(mel)
@@ -200,33 +200,25 @@ class MatrixSolver: NSObject, ObservableObject {
     }
     
     func generateLinearCombinations(squareWellObj: InfiniteSquareWell, V: PotentialList, evecs: [[ComplexTuple]]) {
-        var reeig : [Double] = []
+        var newFuncs : [[Double]] = []
         for evec in evecs {
-            reeig = []
-            for item in evec {
-                reeig.append(item.re)
+            var reeig : [Double] = []
+            for item in evec { reeig.append(item.re) }
+            var newEigenFunc = [Double](repeating: 0.0, count: Int(squareWellObj.steps))
+            for (coeff,efunc) in zip(reeig,squareWellObj.basisFuncs) {
+                newEigenFunc = weightedSum(arr: efunc, num: coeff, oldResult: newEigenFunc)
             }
-            print("\(reeig)")
+            newFuncs.append(newEigenFunc)
         }
-//        // f(x) = sum evec_i * basis_i(x) -> f_i = sum evec_j * basis_j_i
-//        let basisFuncs = squareWellObj.basisFuncs, xs = V.xs
-//
-//        // first deal with first eigenvector, contains constants for first function
-//
-//
-//        for i in 0..<evecs.count {
-//            var sumval = 0.0
-//            for j in 0..<evecs[i].count {
-//                // ith eigenvector => ith basis func of diagonalized hamiltonian
-//                let evec = evecs[i] // elements of this are the constants to make the first basis func of new H
-//
-//
-//                // now dealing with basis func
-//                let curbasisfunc = basisFuncs[i]
-//
-//                }
-//            }
-//        }
+        fillSolvedFuncs(xs: V.xs, funcs: newFuncs)
+    }
+    
+    func weightedSum(arr: [Double], num: Double, oldResult: [Double]) -> [Double] {
+        var newResult : [Double] = []
+        for i in 0..<arr.count {
+            newResult.append(arr[i] * num + oldResult[i])
+        }
+        return newResult
     }
     
     /// pack2DArray
@@ -272,6 +264,24 @@ class MatrixSolver: NSObject, ObservableObject {
         for (x, V) in zip(potential.xs, potential.Vs) {
             potentialPlot.append([.X: x, .Y: V])
         }
+    }
+    
+    /// Create the plotDataType with the Potential Values
+    func fillSolvedFuncs(xs: [Double], funcs: [[Double]]) {
+        for arr in funcs {
+            var tempList : [plotDataType] = []
+            for (x, v) in zip(xs, arr) {
+                tempList.append([.X: x, .Y: v])
+            }
+            solvedFuncsRe.append(tempList)
+        }
+    }
+    
+    func clear() {
+        solvedFuncsRe.removeAll()
+        solvedFuncsIm.removeAll()
+        potentialPlot.removeAll()
+        energyEigenValues.removeAll()
     }
     
 }

@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct Matrix_SolverApp: App {
+    
+    @StateObject var plotData = PlotClass()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(plotData)
         }
     }
 }
