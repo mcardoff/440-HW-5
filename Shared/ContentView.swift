@@ -13,19 +13,35 @@ struct ContentView: View {
     var body: some View {
         TextEditor(text: $stringText)
         
-        Button("Calculate", action: calculate)
+        HStack {
+            Button("Calculate", action: calculate)
+                .padding()
+            Button("Clear", action: clearText)
+                .padding()
+        }
     }
     
     func calculate() {
-        var matrix : [[Double]] = []
-        let n = 5
-        for i in 0..<n{
-            matrix.append((0..<n).map { _ in .random(in: 1...20) })
-            stringText += "\(matrix[i])\n"
+        let V : PotentialList = getPotential(xMin: 0, xMax: 1.0, steps: 500, choice: .linear, amplitude: 5.0)
+        let matrix : [[Double]] = computeHamiltonian(V: V)
+        
+        for vec in matrix {
+            for elem in vec {
+                stringText += String(format: "%3.3e ", elem)
+            }
+            stringText += "\n"
         }
         
-        let evals = diagonalizeExample(arr: matrix)
-        stringText += "\n\nEigenvals:\n \(evals)"
+        let eigenTuple = diagonalizeExample(arr: matrix)
+        stringText += "\n\nEigenvals:\n \(eigenTuple.evals.sorted())\n\n"
+        for vec in eigenTuple.evecs {
+            stringText += "\(vec)"
+            stringText += "\n"
+        }
+    }
+    
+    func clearText() {
+        stringText = ""
     }
 }
 

@@ -32,6 +32,8 @@
 		2CFB7F9A27F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9827F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift */; };
 		2CFB7F9C27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9B27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift */; };
 		2CFB7F9D27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9B27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift */; };
+		2CFB7F9F27F55A4600C0A8F8 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9E27F55A4600C0A8F8 /* Potential.swift */; };
+		2CFB7FA027F55A4600C0A8F8 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9E27F55A4600C0A8F8 /* Potential.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +73,7 @@
 		2CFB7F8B27F504F200C0A8F8 /* PlotDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlotDataClass.swift; sourceTree = "<group>"; };
 		2CFB7F9827F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixDiagonalizationSolver.swift; sourceTree = "<group>"; };
 		2CFB7F9B27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteSquareWellBasis.swift; sourceTree = "<group>"; };
+		2CFB7F9E27F55A4600C0A8F8 /* Potential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Potential.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +127,7 @@
 				2CFB7F4627F2673600C0A8F8 /* Matrix_SolverApp.swift */,
 				2CFB7F4727F2673600C0A8F8 /* ContentView.swift */,
 				2CFB7F9827F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift */,
+				2CFB7F9E27F55A4600C0A8F8 /* Potential.swift */,
 				2CFB7F9B27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift */,
 				2CFB7F4827F2673800C0A8F8 /* Assets.xcassets */,
 			);
@@ -351,6 +355,7 @@
 				2CFB7F6E27F2673800C0A8F8 /* Matrix_SolverApp.swift in Sources */,
 				2CFB7F9927F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift in Sources */,
 				2CFB7F8427F504CE00C0A8F8 /* ChangingPlotParameters.swift in Sources */,
+				2CFB7F9F27F55A4600C0A8F8 /* Potential.swift in Sources */,
 				2CFB7F8C27F504F200C0A8F8 /* PlotDataClass.swift in Sources */,
 				2CFB7F8827F504DD00C0A8F8 /* CorePlot.swift in Sources */,
 				2CFB7F8A27F504E500C0A8F8 /* PlotClass.swift in Sources */,
@@ -367,6 +372,7 @@
 				2CFB7F8D27F504F200C0A8F8 /* PlotDataClass.swift in Sources */,
 				2CFB7F9A27F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift in Sources */,
 				2CFB7F6F27F2673800C0A8F8 /* Matrix_SolverApp.swift in Sources */,
+				2CFB7FA027F55A4600C0A8F8 /* Potential.swift in Sources */,
 				2CFB7F8E27F504F600C0A8F8 /* PlotClass.swift in Sources */,
 				2CFB7F9127F504FF00C0A8F8 /* ChangingPlotParameters.swift in Sources */,
 				2CFB7F8F27F504F900C0A8F8 /* CorePlot.swift in Sources */,

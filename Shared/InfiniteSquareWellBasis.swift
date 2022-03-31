@@ -40,7 +40,7 @@ class InfiniteSquareWell: NSObject, ObservableObject {
     }
     
     func generateBasisFuncs() {
-        for n in 0...numberOfEnergyEVals {
+        for n in 1...(numberOfEnergyEVals+1) {
             var psiList : [Double] = []
             var psiPlot : [plotDataType] = []
             for x in stride(from: 0.0, to: self.wellWidth, by: self.stepSize) {

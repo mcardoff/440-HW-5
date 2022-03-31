@@ -8,12 +8,15 @@
 import Foundation
 import Accelerate
 
-func diagonalizeExample(arr: [[Double]]) -> [Double] {
+typealias ComplexTuple = (re: Double, im: Double)
+
+func diagonalizeExample(arr: [[Double]]) -> (evals: [Double], evecs: [[ComplexTuple]]) {
     // Diagonalize input array
     // Note that arr is a 2D row major array in Swift, convert to column major:
     let flatArr : [Double] = pack2dArray(arr: arr, rows: arr.count, cols: arr.count)
-    var returnString = ""
-    var returnArr : [Double] = []
+//    var returnString = ""
+    var eigenvals : [Double] = []
+    var eigenvecs : [[ComplexTuple]] = []
     
     var N = Int32(sqrt(Double(flatArr.count)))
     var N2 = Int32(sqrt(Double(flatArr.count)))
@@ -52,7 +55,7 @@ func diagonalizeExample(arr: [[Double]]) -> [Double] {
     var workspaceQuery: Double = 0.0
     dgeev_(UnsafeMutablePointer(mutating: ("N" as NSString).utf8String), UnsafeMutablePointer(mutating: ("V" as NSString).utf8String), &N, &flatArray, &N2, &wr, &wi, &vl, &N3, &vr, &N4, &workspaceQuery, &lwork, &error)
     
-    print("Workspace Query \(workspaceQuery)")
+//    print("Workspace Query \(workspaceQuery)")
     
     /* size workspace per the results of the query */
     
@@ -68,10 +71,11 @@ func diagonalizeExample(arr: [[Double]]) -> [Double] {
         // transform the returned matrices to eigenvalues and eigenvectors
         for index in 0..<wi.count {
             if (wi[index]>=0.0) {
-                returnString += "Eigenvalue\n\(wr[index]) + \(wi[index])i\n\n"
-                returnArr.append(wr[index])
+//                returnString += "Eigenvalue\n\(wr[index]) + \(wi[index])i\n\n"
+                eigenvals.append(wr[index])
             } else {
-                returnString += "Eigenvalue\n\(wr[index]) - \(fabs(wi[index]))i\n\n"
+//                returnString += "Eigenvalue\n\(wr[index]) - \(fabs(wi[index]))i\n\n"
+                eigenvals.append(wr[index])
             }
             
 //            returnString += "Eigenvector\n"
@@ -91,28 +95,35 @@ func diagonalizeExample(arr: [[Double]]) -> [Double] {
              If the j-th and (j+1)-st eigenvalues form a complex
              conjugate pair, then v(j) = VR(:,j) + i*VR(:,j+1) and
              v(j+1) = VR(:,j) - i*VR(:,j+1). */
-            
-//            for j in 0..<N {
-//                if(wi[index]==0) {
-//
+            var tempevecList : [ComplexTuple] = []
+            for j in 0..<N {
+                
+                if(wi[index]==0) {
+
 //                    returnString += "\(vr[Int(index)*(Int(N))+Int(j)]) + 0.0i, \n" /* print x */
-//
-//                } else if(wi[index]>0) {
-//                    if(vr[Int(index)*(Int(N))+Int(j)+Int(N)]>=0) {
+                    tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)], im: 0.0))
+
+                } else if(wi[index]>0) {
+                    if(vr[Int(index)*(Int(N))+Int(j)+Int(N)]>=0) {
 //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)]) + \(vr[Int(index)*(Int(N))+Int(j)+Int(N)])i, \n"
-//                    } else {
+                        tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)], im: vr[Int(index)*(Int(N))+Int(j)+Int(N)]))
+                    } else {
 //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)]) - \(fabs(vr[Int(index)*(Int(N))+Int(j)+Int(N)]))i, \n"
-//                    }
-//                } else {
-//                    if(vr[Int(index)*(Int(N))+Int(j)]>0) {
+                        tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)], im: fabs(vr[Int(index)*(Int(N))+Int(j)+Int(N)])))
+                    }
+                } else {
+                    if(vr[Int(index)*(Int(N))+Int(j)]>0) {
 //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)-Int(N)]) - \(vr[Int(index)*(Int(N))+Int(j)])i, \n"
-//                    } else {
+                        tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)-Int(N)], im: -vr[Int(index)*(Int(N))+Int(j)]))
+                    } else {
 //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)-Int(N)]) + \(fabs(vr[Int(index)*(Int(N))+Int(j)]))i, \n"
-//                    }
-//                }
-//            }
-//
-//            /* Remove the last , in the returned Eigenvector */
+                        tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)-Int(N)], im: fabs(vr[Int(index)*(Int(N))+Int(j)])))
+                    }
+                }
+            }
+            eigenvecs.append(tempevecList)
+
+            /* Remove the last , in the returned Eigenvector */
 //            returnString.remove(at: returnString.index(before: returnString.endIndex))
 //            returnString.remove(at: returnString.index(before: returnString.endIndex))
 //            returnString.remove(at: returnString.index(before: returnString.endIndex))
@@ -120,12 +131,51 @@ func diagonalizeExample(arr: [[Double]]) -> [Double] {
         }
     }
     else {print("An error occurred\n")}
-    
-    return (returnArr)
+    return (evals: eigenvals, evecs: eigenvecs)
 }
 
-func computeHamiltonian() {
-    // construct the
+func computeHamiltonian(V: PotentialList) -> [[Double]] {
+    // construct the hamiltonian from a potential function V using H_{ij} = <i|H|j>
+    let energyStates = 5, wellWidth = V.xs.max()! - V.xs.min()!
+    let squareWellObj = InfiniteSquareWell(wellWidth: wellWidth, numberOfEnergyEVals: energyStates, steps: V.xs.count)
+    let basisStates = squareWellObj.basisFuncs
+    
+    var hamiltonian : [[Double]] = []
+    
+    for i in 0...energyStates {
+        var singleHamiltonianRow : [Double] = []
+        for j in 0...energyStates {
+            let psil = basisStates[j], psir = basisStates[i]
+            var mel = matrixElement(psil: psil, V: V, psir: psir, wellwidth: wellWidth)
+            if i == j {
+                mel -= squareWellObj.eigenVals[i] // diagonal elements will have the kinetic energy
+            }
+//            print("H_\(i),\(j)=\(mel)")
+            singleHamiltonianRow.append(mel)
+        }
+        hamiltonian.append(singleHamiltonianRow)
+    }
+    
+    return hamiltonian
+    
+}
+
+func matrixElement(psil: [Double], V: PotentialList, psir: [Double], wellwidth: Double) -> Double {
+    // convert integral into average value
+    // < g | H | f > = \int_0^a dx (g * H * f), = a * <g H f>
+    var sum = 0.0
+    let vList = V.Vs
+    for i in 0..<vList.count {
+        let v = vList[i], l = psil[i], r = psir[i]
+        sum += l * v * r
+    }
+    
+    // can recover wellwidth from V
+    let wellWidth = V.xs.max()! - V.xs.min()!
+    // average value thm
+    let mel = wellWidth * sum / Double(vList.count)
+    
+    return mel
 }
 
 /// pack2DArray
