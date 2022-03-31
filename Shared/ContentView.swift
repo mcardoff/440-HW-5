@@ -32,7 +32,7 @@ struct ContentView: View {
             stringText += "\n"
         }
         
-        let eigenTuple = diagonalizeExample(arr: matrix)
+        let eigenTuple = diagonalize(arr: matrix)
         stringText += "\n\nEigenvals:\n \(eigenTuple.evals.sorted())\n\n"
         for vec in eigenTuple.evecs {
             stringText += "\(vec)"
