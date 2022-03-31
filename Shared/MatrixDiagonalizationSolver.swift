@@ -11,7 +11,7 @@ import Accelerate
 func diagonalizeExample(arr: [[Double]]) -> [Double] {
     // Diagonalize input array
     // Note that arr is a 2D row major array in Swift, convert to column major:
-    var flatArr : [Double] = pack2dArray(arr: arr, rows: arr.count, cols: arr.count)
+    let flatArr : [Double] = pack2dArray(arr: arr, rows: arr.count, cols: arr.count)
     var returnString = ""
     var returnArr : [Double] = []
     
@@ -125,7 +125,7 @@ func diagonalizeExample(arr: [[Double]]) -> [Double] {
 }
 
 func computeHamiltonian() {
-    
+    // construct the
 }
 
 /// pack2DArray
