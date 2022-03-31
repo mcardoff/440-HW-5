@@ -151,7 +151,7 @@ class MatrixSolver: NSObject, ObservableObject {
         
         let eigenTuple = diagonalize(arr: hamiltonian)
         energyEigenValues.append(contentsOf: eigenTuple.evals)
-        generateLinearCombinations()
+        generateLinearCombinations(squareWellObj: squareWellObj, V: V, evecs: eigenTuple.evecs)
     }
     
     func computeHamiltonian(squareWellObj: InfiniteSquareWell, V: PotentialList) -> [[Double]] {
@@ -199,8 +199,34 @@ class MatrixSolver: NSObject, ObservableObject {
         return mel
     }
     
-    func generateLinearCombinations(squareWellObj: InfiniteSquareWell, evecs: [[ComplexTuple]]) {
-        
+    func generateLinearCombinations(squareWellObj: InfiniteSquareWell, V: PotentialList, evecs: [[ComplexTuple]]) {
+        var reeig : [Double] = []
+        for evec in evecs {
+            reeig = []
+            for item in evec {
+                reeig.append(item.re)
+            }
+            print("\(reeig)")
+        }
+//        // f(x) = sum evec_i * basis_i(x) -> f_i = sum evec_j * basis_j_i
+//        let basisFuncs = squareWellObj.basisFuncs, xs = V.xs
+//
+//        // first deal with first eigenvector, contains constants for first function
+//
+//
+//        for i in 0..<evecs.count {
+//            var sumval = 0.0
+//            for j in 0..<evecs[i].count {
+//                // ith eigenvector => ith basis func of diagonalized hamiltonian
+//                let evec = evecs[i] // elements of this are the constants to make the first basis func of new H
+//
+//
+//                // now dealing with basis func
+//                let curbasisfunc = basisFuncs[i]
+//
+//                }
+//            }
+//        }
     }
     
     /// pack2DArray

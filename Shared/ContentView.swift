@@ -22,22 +22,8 @@ struct ContentView: View {
     }
     
     func calculate() {
-        let V : PotentialList = getPotential(xMin: 0, xMax: 1.0, steps: 500, choice: .linear, amplitude: 5.0)
-        let matrix : [[Double]] = computeHamiltonian(V: V)
-        
-        for vec in matrix {
-            for elem in vec {
-                stringText += String(format: "%3.3e ", elem)
-            }
-            stringText += "\n"
-        }
-        
-        let eigenTuple = diagonalize(arr: matrix)
-        stringText += "\n\nEigenvals:\n \(eigenTuple.evals.sorted())\n\n"
-        for vec in eigenTuple.evecs {
-            stringText += "\(vec)"
-            stringText += "\n"
-        }
+        let solver = MatrixSolver()
+        solver.solveSchrodinger(a: 1.0, steps: 10000, Vt: .linear, potentialAmp: 0.0, energyStates: 5)
     }
     
     func clearText() {
