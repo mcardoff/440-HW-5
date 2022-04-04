@@ -9,6 +9,8 @@ import Foundation
 
 let PI = Double.pi
 
+
+// Class to generate the infinite square well eigenfunctions and eigenvalues
 class InfiniteSquareWell: NSObject, ObservableObject {
     var wellWidth : Double
     var steps : Int
@@ -21,6 +23,7 @@ class InfiniteSquareWell: NSObject, ObservableObject {
     
     let hbar = 1.0, mass = 1.0
     
+    // default constructor
     override init() {
         self.wellWidth = 1.0
         self.numberOfEnergyEVals = 2
@@ -29,6 +32,7 @@ class InfiniteSquareWell: NSObject, ObservableObject {
         super.init()
     }
     
+    // constructor with values
     init(wellWidth: Double, numberOfEnergyEVals: Int, steps: Int) {
         self.wellWidth = wellWidth
         self.numberOfEnergyEVals = numberOfEnergyEVals
@@ -39,6 +43,8 @@ class InfiniteSquareWell: NSObject, ObservableObject {
         self.generateBasisFuncs()
     }
     
+    /// generateBasisFuncs
+    /// Fills the object with the eigenfunctions and eigenvalues
     func generateBasisFuncs() {
         for n in 1...(numberOfEnergyEVals+1) {
             var psiList : [Double] = []

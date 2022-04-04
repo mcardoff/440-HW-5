@@ -120,6 +120,7 @@ struct ContentView: View {
         }
     }
     
+    // do all the operations with the eigenvalue text and the plots
     func calculate() {
         self.clear()
         solver.solveSchrodinger(
@@ -129,6 +130,7 @@ struct ContentView: View {
         }
     }
     
+    // manipulate which eigenvalue we are viewing
     func increasesel() {
         if selector < $solver.solvedFuncsRe.count - 1 {
             selector += 1
@@ -145,11 +147,13 @@ struct ContentView: View {
         }
     }
     
+    //clear everything
     func clear() {
         selector = 0
         solver.clear()
     }
     
+    // if the well width was changed, also change the plot limits
     func setParams() {
         plotData.plotArray[0].changingPlotParameters.xMax = wellWidth! + 0.1
     }

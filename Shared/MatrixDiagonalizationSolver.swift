@@ -17,6 +17,34 @@ class MatrixSolver: NSObject, ObservableObject {
     @Published var potentialPlot : [plotDataType] = []
     @Published var energyEigenValues : [Double] = []
     
+    /// solveSchrodinger
+    /// Solve the Schrodinger equation in a box of width a, with steps steps, by diagonalizing the hamiltonian H = T + Vt using energyStates eigenstates
+    ///
+    /// - Parameters:
+    ///   - a: The Well width
+    ///   - steps: Number of steps to use in generation of ISW states
+    ///   - Vt: Potential to use when generating Hamiltonian
+    ///   - potentialAmp: Amplitude of potential
+    ///   - energyStates: Number of infinite square well states to use
+    func solveSchrodinger(a: Double, steps: Int, Vt: PotentialType, potentialAmp: Double, energyStates: Int) {
+        let V = getPotential(xMin: 0.0, xMax: a, steps: steps, choice: Vt, amplitude: potentialAmp),
+            squareWellObj = InfiniteSquareWell(wellWidth: a, numberOfEnergyEVals: energyStates, steps: steps),
+            hamiltonian = computeHamiltonian(squareWellObj: squareWellObj, V: V)
+        // diagonalize the hamiltonian
+        
+        fillPotentialPlot(potential: V)
+        
+        let eigenTuple = diagonalize(arr: hamiltonian)
+        energyEigenValues.append(contentsOf: eigenTuple.evals)
+        generateLinearCombinations(squareWellObj: squareWellObj, V: V, evecs: eigenTuple.evecs)
+    }
+    
+    /// diagonalize
+    /// Diagonalizes the array arr returning its eigenvalues and eigenvectors
+    ///
+    /// - Parameters:
+    ///   - arr: 2D array
+    /// - Returns: Tuple with the eigenvalues and eigenvectors
     func diagonalize(arr: [[Double]]) -> (evals: [Double], evecs: [[ComplexTuple]]) {
         // Diagonalize input array
         // Note that arr is a 2D row major array in Swift, convert to column major:
@@ -141,19 +169,13 @@ class MatrixSolver: NSObject, ObservableObject {
         return (evals: eigenvals, evecs: eigenvecs)
     }
     
-    func solveSchrodinger(a: Double, steps: Int, Vt: PotentialType, potentialAmp: Double, energyStates: Int) {
-        let V = getPotential(xMin: 0.0, xMax: a, steps: steps, choice: Vt, amplitude: potentialAmp),
-            squareWellObj = InfiniteSquareWell(wellWidth: a, numberOfEnergyEVals: energyStates, steps: steps),
-            hamiltonian = computeHamiltonian(squareWellObj: squareWellObj, V: V)
-        // diagonalize the hamiltonian
-        
-        fillPotentialPlot(potential: V)
-        
-        let eigenTuple = diagonalize(arr: hamiltonian)
-        energyEigenValues.append(contentsOf: eigenTuple.evals)
-        generateLinearCombinations(squareWellObj: squareWellObj, V: V, evecs: eigenTuple.evecs)
-    }
-    
+    /// computeHamiltonian
+    /// Computes the Hamiltonian matrix for the potential V
+    ///
+    /// - Parameters:
+    ///   - squareWellObj: Object containing info like the well width as well as the basis states
+    ///   - V: Potential x and function values
+    /// - Returns: Hamiltonian matrix in infinite square well basis
     func computeHamiltonian(squareWellObj: InfiniteSquareWell, V: PotentialList) -> [[Double]] {
         // construct the hamiltonian from a potential function V using H_{ij} = <i|H|j>
         
@@ -181,6 +203,15 @@ class MatrixSolver: NSObject, ObservableObject {
         
     }
     
+    /// matrixElement
+    /// Computes an individual matrix element <psil|T+V|psir> using infinite square well states
+    ///
+    /// - Parameters:
+    ///   - psil: Left eigenfunction
+    ///   - V: Potential
+    ///   - psir: Right eigenfunction
+    ///   - wellWidth: width of the well
+    /// - Returns: The matrix element <psil|T+V|psir>
     func matrixElement(psil: [Double], V: PotentialList, psir: [Double], wellwidth: Double) -> Double {
         // convert integral into average value
         // < g | H | f > = \int_0^a dx (g * H * f), = a * <g H f>
@@ -199,6 +230,13 @@ class MatrixSolver: NSObject, ObservableObject {
         return mel
     }
     
+    /// generateLinearCombinations
+    /// creates the linear combinations of eigenfunctions which the function <diagonalize> creates
+    ///
+    /// - Parameters:
+    ///   - squareWellObj: Object containing info like the well width as well as the basis states
+    ///   - V: Potential
+    ///   - evecs: eigenvectors of the diagonalized hamiltonian
     func generateLinearCombinations(squareWellObj: InfiniteSquareWell, V: PotentialList, evecs: [[ComplexTuple]]) {
         var newFuncs : [[Double]] = []
         for evec in evecs {
@@ -214,6 +252,14 @@ class MatrixSolver: NSObject, ObservableObject {
         fillSolvedFuncs(xs: V.xs, funcs: newFuncs)
     }
     
+    /// weightedSum
+    /// does the weighted sum for the linear combinations above
+    ///
+    /// - Parameters:
+    ///   - arr: next eigenfunction to add on
+    ///   - num: coefficient to multiply everything by in the eigenfunc
+    ///   - oldResult: the function so far, without all the eigenfunctions
+    /// - Returns: input <oldResult> updated with the new eigenfunc
     func weightedSum(arr: [Double], num: Double, oldResult: [Double]) -> [Double] {
         var newResult : [Double] = []
         for i in 0..<arr.count {
@@ -222,6 +268,13 @@ class MatrixSolver: NSObject, ObservableObject {
         return newResult
     }
     
+    /// normalizeFuncs
+    /// adjusts amplitude so it is positive when necessary, not really a necessary function...
+    ///
+    /// - Parameters:
+    ///   - squareWellObj: Object containing info like the well width as well as the basis states
+    ///   - funcs: functions to normalize
+    /// - Returns: normalized functions
     func normalizeFuncs(squareWellObj: InfiniteSquareWell, funcs: [[Double]]) -> [[Double]] {
         var newFuncs : [[Double]] = []
         let a = squareWellObj.wellWidth
@@ -297,6 +350,7 @@ class MatrixSolver: NSObject, ObservableObject {
         }
     }
     
+    /// remove all data, used in ContentView
     func clear() {
         solvedFuncsRe.removeAll()
         solvedFuncsIm.removeAll()
