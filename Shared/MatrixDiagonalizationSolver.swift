@@ -208,8 +208,9 @@ class MatrixSolver: NSObject, ObservableObject {
             for (coeff,efunc) in zip(reeig,squareWellObj.basisFuncs) {
                 newEigenFunc = weightedSum(arr: efunc, num: coeff, oldResult: newEigenFunc)
             }
-            newFuncs.append(newEigenFunc)
+            newFuncs.append(newEigenFunc.reversed())
         }
+        newFuncs = normalizeFuncs(squareWellObj: squareWellObj, funcs: newFuncs)
         fillSolvedFuncs(xs: V.xs, funcs: newFuncs)
     }
     
@@ -219,6 +220,25 @@ class MatrixSolver: NSObject, ObservableObject {
             newResult.append(arr[i] * num + oldResult[i])
         }
         return newResult
+    }
+    
+    func normalizeFuncs(squareWellObj: InfiniteSquareWell, funcs: [[Double]]) -> [[Double]] {
+        var newFuncs : [[Double]] = []
+        let a = squareWellObj.wellWidth
+        // use average value theorem
+        for fun in funcs {
+            var normalized : [Double] = [], sumSq = 0.0, sum = 0.0
+            for val in fun { sumSq += val*val; sum += val }
+            let normVal = a * sumSq / Double(fun.count)
+            print(normVal)
+            for val in fun {
+                var appendVal = val / normVal
+                if(sum < 0.0) { appendVal *= -1 }
+                normalized.append(appendVal)
+            }
+            newFuncs.append(normalized)
+        }
+        return newFuncs
     }
     
     /// pack2DArray

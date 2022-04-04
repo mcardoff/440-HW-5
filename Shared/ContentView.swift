@@ -12,13 +12,14 @@ struct ContentView: View {
     @EnvironmentObject var plotData : PlotClass
     @ObservedObject var solver = MatrixSolver()
     
-    @State var emptyPlot : [plotDataType] = []
-    @State var selector = 0
+    @State var selector : Int = 0
     @State var numSteps: Int? = 250
     @State var numStates: Int? = 5
-    @State var wellWidth: Double? = 2.0
+    @State var wellWidth: Double? = 1.0
     @State var amplitude: Double? = 0.0
+    @State var eigenvalueText : String = ""
     @State var potentialVal: PotentialType = .square
+    @State var emptyPlot : [plotDataType] = []
     
     private var intFormatter: NumberFormatter = {
         let f = NumberFormatter()
@@ -110,13 +111,22 @@ struct ContentView: View {
                     .tabItem {
                         Text("Potential Plot")
                     }
+                
+                TextEditor(text: $eigenvalueText)
+                    .tabItem {
+                        Text("Energy Eigenvalues")
+                    }
             }
         }
     }
     
     func calculate() {
+        self.clear()
         solver.solveSchrodinger(
             a: wellWidth!, steps: numSteps!, Vt: potentialVal, potentialAmp: amplitude!, energyStates: numStates!)
+        for i in 0..<solver.energyEigenValues.count {
+            self.eigenvalueText += "E_\(i) = \(solver.energyEigenValues[i])\n"
+        }
     }
     
     func increasesel() {
@@ -138,6 +148,10 @@ struct ContentView: View {
     func clear() {
         selector = 0
         solver.clear()
+    }
+    
+    func setParams() {
+        plotData.plotArray[0].changingPlotParameters.xMax = wellWidth! + 0.1
     }
     
 }
