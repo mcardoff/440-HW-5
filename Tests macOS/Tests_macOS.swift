@@ -28,7 +28,7 @@ class Tests_macOS: XCTestCase {
             hamiltonian = computeHamiltonian(squareWellObj: ISW, V: getPotential(squareWellObj: ISW, choice: .square, amplitude: 0.0))
         for i in 0..<hamiltonian.count {
             for j in 0..<hamiltonian.count {
-                XCTAssertEqual(hamiltonian[i][j], hamiltonian[j][i], accuracy: 1e-10)
+                if i != j { XCTAssertEqual(hamiltonian[i][j], hamiltonian[j][i], accuracy: 1e-10) }
             }
         }
     }
