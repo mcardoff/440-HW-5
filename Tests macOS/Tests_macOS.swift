@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import Matrix_Solver
 
 class Tests_macOS: XCTestCase {
 
@@ -20,6 +21,16 @@ class Tests_macOS: XCTestCase {
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+    
+    func testHamiltonian() throws {
+        let ISW = InfiniteSquareWell(wellWidth: 1.0, numberOfEnergyEVals: 5, steps: 250),
+            hamiltonian = computeHamiltonian(squareWellObj: ISW, V: getPotential(squareWellObj: ISW, choice: .square, amplitude: 0.0))
+        for i in 0..<hamiltonian.count {
+            for j in 0..<hamiltonian.count {
+                XCTAssertEqual(hamiltonian[i][j], hamiltonian[j][i], accuracy: 1e-10)
+            }
+        }
     }
 
     func testExample() throws {

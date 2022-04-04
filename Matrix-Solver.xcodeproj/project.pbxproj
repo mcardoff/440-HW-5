@@ -34,6 +34,11 @@
 		2CFB7F9D27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9B27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift */; };
 		2CFB7F9F27F55A4600C0A8F8 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9E27F55A4600C0A8F8 /* Potential.swift */; };
 		2CFB7FA027F55A4600C0A8F8 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9E27F55A4600C0A8F8 /* Potential.swift */; };
+		2CFB7FA227FBAC8300C0A8F8 /* InfiniteSquareWellBasis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9B27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift */; };
+		2CFB7FA327FBAC8A00C0A8F8 /* Potential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9E27F55A4600C0A8F8 /* Potential.swift */; };
+		2CFB7FA427FBAC9100C0A8F8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F4727F2673600C0A8F8 /* ContentView.swift */; };
+		2CFB7FA527FBAC9300C0A8F8 /* MatrixDiagonalizationSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F9827F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift */; };
+		2CFB7FA627FBAD2D00C0A8F8 /* Tests_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFB7F6A27F2673800C0A8F8 /* Tests_macOS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -351,6 +356,7 @@
 			files = (
 				2CFB7F7027F2673800C0A8F8 /* ContentView.swift in Sources */,
 				2CFB7F9C27F5206400C0A8F8 /* InfiniteSquareWellBasis.swift in Sources */,
+				2CFB7FA627FBAD2D00C0A8F8 /* Tests_macOS.swift in Sources */,
 				2CFB7F8627F504D600C0A8F8 /* CalculatePlotData.swift in Sources */,
 				2CFB7F6E27F2673800C0A8F8 /* Matrix_SolverApp.swift in Sources */,
 				2CFB7F9927F509D400C0A8F8 /* MatrixDiagonalizationSolver.swift in Sources */,
@@ -393,7 +399,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CFB7F6D27F2673800C0A8F8 /* Tests_macOSLaunchTests.swift in Sources */,
+				2CFB7FA427FBAC9100C0A8F8 /* ContentView.swift in Sources */,
+				2CFB7FA227FBAC8300C0A8F8 /* InfiniteSquareWellBasis.swift in Sources */,
+				2CFB7FA327FBAC8A00C0A8F8 /* Potential.swift in Sources */,
 				2CFB7F6B27F2673800C0A8F8 /* Tests_macOS.swift in Sources */,
+				2CFB7FA527FBAC9300C0A8F8 /* MatrixDiagonalizationSolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -57,9 +57,12 @@ enum PotentialType: CaseIterable, Identifiable {
     }
 }
 
-func getPotential(xMin: Double, xMax: Double, steps: Int, choice: PotentialType, amplitude: Double) -> PotentialList {
-//    print(choice)
+func getPotential(squareWellObj: InfiniteSquareWell, choice: PotentialType, amplitude: Double) -> PotentialList {
+    let xMin = 0.0, xMax = squareWellObj.wellWidth, steps = squareWellObj.steps
+    return getPotential(xMin: xMin, xMax: xMax, steps: steps, choice: choice, amplitude: amplitude)
+}
 
+func getPotential(xMin: Double, xMax: Double, steps: Int, choice: PotentialType, amplitude: Double) -> PotentialList {
     switch(choice) {
     case .square:
         return squareWell(xMin: xMin, xMax: xMax, steps: steps, height: amplitude)
