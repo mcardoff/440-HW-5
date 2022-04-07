@@ -35,8 +35,11 @@ class MatrixSolver: NSObject, ObservableObject {
         fillPotentialPlot(potential: V)
         
         let eigenTuple = diagonalize(arr: hamiltonian)
-        energyEigenValues.append(contentsOf: eigenTuple.evals)
-        generateLinearCombinations(squareWellObj: squareWellObj, V: V, evecs: eigenTuple.evecs)
+        let sortedEigenTuple = eigenSort(evals: eigenTuple.evals, funcs: generateLinearCombinations(squareWellObj: squareWellObj, V: V, evecs: eigenTuple.evecs))
+        energyEigenValues.append(contentsOf: sortedEigenTuple.sortedEvals)
+        fillSolvedFuncs(xs: V.xs, funcs: sortedEigenTuple.sortedFuncs)
+        
+        
     }
     
     /// diagonalize
@@ -45,13 +48,13 @@ class MatrixSolver: NSObject, ObservableObject {
     /// - Parameters:
     ///   - arr: 2D array
     /// - Returns: Tuple with the eigenvalues and eigenvectors
-    func diagonalize(arr: [[Double]]) -> (evals: [Double], evecs: [[ComplexTuple]]) {
+    func diagonalize(arr: [[Double]]) -> (evals: [Double], evecs: [[Double]]) {
         // Diagonalize input array
         // Note that arr is a 2D row major array in Swift, convert to column major:
         let flatArr : [Double] = pack2dArray(arr: arr, rows: arr.count, cols: arr.count)
         //    var returnString = ""
         var eigenvals : [Double] = []
-        var eigenvecs : [[ComplexTuple]] = []
+        var eigenvecs : [[Double]] = []
         
         var N = Int32(sqrt(Double(flatArr.count)))
         var N2 = Int32(sqrt(Double(flatArr.count)))
@@ -130,30 +133,14 @@ class MatrixSolver: NSObject, ObservableObject {
                  If the j-th and (j+1)-st eigenvalues form a complex
                  conjugate pair, then v(j) = VR(:,j) + i*VR(:,j+1) and
                  v(j+1) = VR(:,j) - i*VR(:,j+1). */
-                var tempevecList : [ComplexTuple] = []
+                var tempevecList : [Double] = []
                 for j in 0..<N {
                     
                     if(wi[index]==0) {
                         
                         //                    returnString += "\(vr[Int(index)*(Int(N))+Int(j)]) + 0.0i, \n" /* print x */
-                        tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)], im: 0.0))
+                        tempevecList.append(vr[Int(index)*(Int(N))+Int(j)])
                         
-                    } else if(wi[index]>0) {
-                        if(vr[Int(index)*(Int(N))+Int(j)+Int(N)]>=0) {
-                            //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)]) + \(vr[Int(index)*(Int(N))+Int(j)+Int(N)])i, \n"
-                            tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)], im: vr[Int(index)*(Int(N))+Int(j)+Int(N)]))
-                        } else {
-                            //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)]) - \(fabs(vr[Int(index)*(Int(N))+Int(j)+Int(N)]))i, \n"
-                            tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)], im: fabs(vr[Int(index)*(Int(N))+Int(j)+Int(N)])))
-                        }
-                    } else {
-                        if(vr[Int(index)*(Int(N))+Int(j)]>0) {
-                            //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)-Int(N)]) - \(vr[Int(index)*(Int(N))+Int(j)])i, \n"
-                            tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)-Int(N)], im: -vr[Int(index)*(Int(N))+Int(j)]))
-                        } else {
-                            //                        returnString += "\(vr[Int(index)*(Int(N))+Int(j)-Int(N)]) + \(fabs(vr[Int(index)*(Int(N))+Int(j)]))i, \n"
-                            tempevecList.append((re: vr[Int(index)*(Int(N))+Int(j)-Int(N)], im: fabs(vr[Int(index)*(Int(N))+Int(j)])))
-                        }
                     }
                 }
                 eigenvecs.append(tempevecList)
@@ -237,19 +224,17 @@ class MatrixSolver: NSObject, ObservableObject {
     ///   - squareWellObj: Object containing info like the well width as well as the basis states
     ///   - V: Potential
     ///   - evecs: eigenvectors of the diagonalized hamiltonian
-    func generateLinearCombinations(squareWellObj: InfiniteSquareWell, V: PotentialList, evecs: [[ComplexTuple]]) {
+    func generateLinearCombinations(squareWellObj: InfiniteSquareWell, V: PotentialList, evecs: [[Double]]) -> [[Double]] {
         var newFuncs : [[Double]] = []
         for evec in evecs {
-            var reeig : [Double] = []
-            for item in evec { reeig.append(item.re) }
             var newEigenFunc = [Double](repeating: 0.0, count: Int(squareWellObj.steps))
-            for (coeff,efunc) in zip(reeig,squareWellObj.basisFuncs) {
+            for (coeff,efunc) in zip(evec,squareWellObj.basisFuncs) {
                 newEigenFunc = weightedSum(arr: efunc, num: coeff, oldResult: newEigenFunc)
             }
             newFuncs.append(newEigenFunc.reversed())
         }
         newFuncs = normalizeFuncs(squareWellObj: squareWellObj, funcs: newFuncs)
-        fillSolvedFuncs(xs: V.xs, funcs: newFuncs)
+        return newFuncs
     }
     
     /// weightedSum
@@ -292,6 +277,23 @@ class MatrixSolver: NSObject, ObservableObject {
             newFuncs.append(normalized)
         }
         return newFuncs
+    }
+    
+    func eigenSort(evals: [Double], funcs: [[Double]]) -> (sortedEvals: [Double], sortedFuncs: [[Double]]) {
+        // generate the zipped list:
+        var newList : [(Double,[Double])] = []
+        for i in 0..<evals.count {
+            newList.append((evals[i], funcs[i]))
+        }
+        
+        newList = newList.sorted(by: {t1, t2 in t1.0 > t2.0})
+        var retVals : [Double] = [], retFuncs : [[Double]] = []
+        for item in newList {
+            retVals.append(item.0)
+            retFuncs.append(item.1)
+        }
+        
+        return (sortedEvals: retVals, sortedFuncs: retFuncs)
     }
     
     /// pack2DArray

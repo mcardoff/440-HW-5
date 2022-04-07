@@ -151,6 +151,7 @@ struct ContentView: View {
     func clear() {
         selector = 0
         solver.clear()
+        eigenvalueText = ""
     }
     
     // if the well width was changed, also change the plot limits
